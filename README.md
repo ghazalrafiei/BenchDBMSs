@@ -3,4 +3,4 @@ There is also optional number of replicas with master-slave method.
 It is able to be exectued via Docker.
 
 List of DBMSs:
-    1- PostgreSQL with [gorm](https://github.com/Gimulator/Gimulator).
+ 1. PostgreSQL with [gorm](https://github.com/Gimulator/Gimulator).
