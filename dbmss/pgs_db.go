@@ -14,6 +14,7 @@ type Pgs_connection struct {
 
 func (c *Pgs_connection) Connect(adr string) error {
 	db, err := gorm.Open("postgres", adr)
+
 	if err != nil {
 		return err
 	}
@@ -43,10 +44,11 @@ func (c *Pgs_connection) Set(obj *object.Object) error {
 	return nil
 }
 
-func (c *Pgs_connection) Delete(k object.Key) {
+func (c *Pgs_connection) Delete(k object.Key) error {
 	//TO DO
 	c.dbs.Create(&k)
 	c.dbs.Where("key = ?", k).Delete(&object.Object{}) //error: unsupported type main.key, a struct
+	return nil
 }
 
 func (c *Pgs_connection) Get(*object.Key) (*object.Object, error) {
