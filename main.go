@@ -10,7 +10,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-var bench_size int = 1500
+var bench_size int = 1000
 
 func BenchSetting(db dbmss.Dbms) (time.Duration, error) {
 	st := time.Now()
@@ -57,24 +57,45 @@ func BenchGetting(db dbmss.Dbms) (time.Duration, error) {
 	return ed.Sub(st), nil
 }
 
-func Bench(dbs dbmss.Dbms, address string, name string) error {
-	err := dbs.Connect(address)
-	if err != nil {
-		return err
-	}
+func Bench(dbs []dbmss.Dbms, address []string, name string) error {
+	for i, b := range dbs {
 
-	err = dbs.Create()
-	if err != nil {
-		return err
+		err := b.Connect(address[i])
+		if err != nil {
+			return err
+		}
+		err = b.Create()
+		if err != nil {
+			return err
+		}
 	}
 
 	var db_result result
 	db_result.name = name
+	db_result.replicas = len(dbs)
 
-	setting_duration, _ := BenchSetting(dbs)
-	deletion_duration, _ := BenchDeleting(dbs)
-	finding_duration, _ := BenchFinding(dbs)
-	getting_duration, _ := BenchGetting(dbs)
+	var (
+		setting_duration  time.Duration
+		deletion_duration time.Duration
+		finding_duration  time.Duration
+		getting_duration  time.Duration
+	)
+	for _, b := range dbs {
+		sd, _ := BenchSetting(b)
+		setting_duration += sd
+	}
+	for _, b := range dbs {
+		sd, _ := BenchDeleting(b)
+		setting_duration += sd
+	}
+	for _, b := range dbs {
+		sd, _ := BenchFinding(b)
+		setting_duration += sd
+	}
+	for _, b := range dbs {
+		sd, _ := BenchGetting(b)
+		setting_duration += sd
+	}
 
 	db_result.setting = setting_duration
 	db_result.deletion = deletion_duration
@@ -86,13 +107,30 @@ func Bench(dbs dbmss.Dbms, address string, name string) error {
 }
 
 func main() {
-	var pstgo dbmss.Dbms
-	pstgo = &dbmss.Pgs_connection{}
-	Bench(pstgo, "host=localhost port=5432 user=postgres dbname=pst-go password=paSs", "PostgreSQL")
+	var (
+		//No difference between master and slave in setting and deletion but in finding and getting
+		master_pstgo dbmss.Dbms
+		slave_pstgo1 dbmss.Dbms
+		slave_pstgo2 dbmss.Dbms
+	)
+
+	addresses := []string{
+		"host=localhost port=5432 user=postgres dbname=pst-go password=paSs",
+		"host=localhost port=5432 user=postgres dbname=pst-go1 password=paSs",
+		"host=localhost port=5432 user=postgres dbname=pst-go2 password=paSs",
+	}
+
+	master_pstgo = &dbmss.Pgs_connection{}
+	slave_pstgo1 = &dbmss.Pgs_connection{}
+	slave_pstgo2 = &dbmss.Pgs_connection{}
+
+	Bench([]dbmss.Dbms{master_pstgo, slave_pstgo1, slave_pstgo2}, addresses, "PostgreSQL")
+
 }
 
 type result struct {
-	name string
+	name     string
+	replicas int
 
 	deletion time.Duration
 	setting  time.Duration
@@ -101,5 +139,5 @@ type result struct {
 }
 
 func (r result) String() string {
-	return fmt.Sprintf("Results for Comparing Few DBMSs for %d Random Tests:\n\n-%s:\n\tSetting: %v\n\tDeleting: %v\n\tFinding: %v\n\tGetting: %v", bench_size, r.name, r.setting, r.deletion, r.finding, r.getting)
+	return fmt.Sprintf("Results for Comparing Few DBMSs for %d Random Tests:\n\n-%s(with %d replicas):\n\tSetting: %v\n\tDeleting: %v\n\tFinding: %v\n\tGetting: %v", bench_size, r.name, r.replicas, r.setting, r.deletion, r.finding, r.getting)
 }
