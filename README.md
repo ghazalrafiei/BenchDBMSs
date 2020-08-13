@@ -3,4 +3,4 @@ Benchmarking few DBMSs with random dataset compatible with package object and st
   This project is able to be exectued via Docker.
 
 List of DBMSs:
-    1- PostgreSQL with [gorm](https://github.com/Gimulator/Gimulator).
+ 1. PostgreSQL with [gorm](https://github.com/Gimulator/Gimulator).
