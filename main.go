@@ -9,7 +9,7 @@ import (
 	"github.com/ghazalrafiei/BenchDBMSs/object"
 )
 
-var bench_size int = 500
+var bench_size int = 1000
 
 func BenchSetting(db dbmss.Dbms) (time.Duration, error) {
 	st := time.Now()
@@ -69,7 +69,7 @@ func Bench(dbs dbmss.Dbms, address string, name string) error {
 
 	var db_result result
 	db_result.name = name
-	db_result.replicas = 1
+	db_result.replicas = 2
 
 	db_result.setting, _ = BenchSetting(dbs)
 
