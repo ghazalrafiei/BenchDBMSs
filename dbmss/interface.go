@@ -9,7 +9,6 @@ type Dbms interface {
 	Create() error
 
 	Set(*object.Object) error
-	Delete(object.Key) error
-	Get(*object.Key) (*object.Object, error)
-	Find(*object.Key) ([]*object.Object, error)
+	Find(uint) error
+	Delete(uint) error
 }
