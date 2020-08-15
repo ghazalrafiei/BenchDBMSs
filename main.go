@@ -9,7 +9,7 @@ import (
 	"github.com/ghazalrafiei/BenchDBMSs/object"
 )
 
-var bench_size int = 5000
+var bench_size int = 2000
 
 func BenchSetting(db dbmss.Dbms) (time.Duration, error) {
 	st := time.Now()
@@ -84,7 +84,6 @@ func Bench(dbs dbmss.Dbms, address string, name string) error {
 func main() {
 
 	var master_pstgo dbmss.Dbms
-
 	master_pstgo = &dbmss.Pgs_connection{}
 
 	Bench(master_pstgo, "host=localhost port=5432 user=postgres dbname=pst-go password=paSs", "PostgreSQL")

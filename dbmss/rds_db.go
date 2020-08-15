@@ -1,9 +1,8 @@
 package dbmss
 
 import (
-	"fmt"
-
 	"encoding/json"
+	"fmt"
 
 	"github.com/ghazalrafiei/BenchDBMSs/object"
 	"github.com/go-redis/redis"
@@ -15,7 +14,6 @@ type Rds_connection struct {
 }
 
 func (rd *Rds_connection) Connect(adr string) error {
-	fmt.Println("called")
 	client := redis.NewClient(&redis.Options{
 		Addr:     adr,
 		Password: "",
