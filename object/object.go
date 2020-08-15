@@ -6,10 +6,10 @@ import (
 )
 
 type Object struct {
-	gorm.Model
-	Type      string
-	Name      string
-	Namespace string
+	gorm.Model `json:"-"`
+	Type       string `json:"type"`
+	Name       string `json:"name"`
+	Namespace  string `json:"namespace"`
 }
 
 var ( //0-4
