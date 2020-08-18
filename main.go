@@ -9,7 +9,7 @@ import (
 	"github.com/ghazalrafiei/BenchDBMSs/object"
 )
 
-var bench_size int = 2000
+var bench_size int = 1000
 
 func BenchSetting(db dbmss.Dbms) (time.Duration, error) {
 	st := time.Now()
@@ -60,6 +60,7 @@ func Bench(dbs dbmss.Dbms, address string, name string) error {
 
 	err := dbs.Connect(address)
 	if err != nil {
+		//fmt.Println("CONNECTION ERROR", err)
 		return err
 	}
 	err = dbs.Create()
@@ -82,7 +83,7 @@ func Bench(dbs dbmss.Dbms, address string, name string) error {
 }
 
 func main() {
-
+	fmt.Println("GO STARTED...")
 	var master_pstgo dbmss.Dbms
 	master_pstgo = &dbmss.Pgs_connection{}
 
@@ -91,8 +92,11 @@ func main() {
 	var master_redis dbmss.Dbms
 	master_redis = &dbmss.Rds_connection{}
 
-	Bench(master_redis, "localhost:6379", "Redis")
+	fmt.Println("sleeping")
+	time.Sleep(6 * time.Second)
+	Bench(master_redis, "redis-server-master:6379", "Redis")
 
+	time.Sleep(2 * time.Minute)
 }
 
 type result struct {

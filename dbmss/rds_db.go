@@ -16,7 +16,7 @@ type Rds_connection struct {
 func (rd *Rds_connection) Connect(adr string) error {
 	client := redis.NewClient(&redis.Options{
 		Addr:     adr,
-		Password: "",
+		Password: "redis",
 		DB:       0,
 	})
 	_, err := client.Ping().Result()
@@ -26,7 +26,7 @@ func (rd *Rds_connection) Connect(adr string) error {
 }
 
 func (rd *Rds_connection) Create() error {
-
+	rd.client.FlushAll()
 	return nil
 }
 
