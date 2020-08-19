@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"time"
 
 	"github.com/ghazalrafiei/BenchDBMSs/dbmss"
@@ -58,15 +59,23 @@ func BenchGetting(db dbmss.Dbms) (time.Duration, error) {
 
 func Bench(dbs dbmss.Dbms, address string, name string) error {
 
+	fmt.Printf("Trying to connect database %s %s\n", address, name)
+
 	err := dbs.Connect(address)
+
 	if err != nil {
-		//fmt.Println("CONNECTION ERROR", err)
+		fmt.Printf("error: %s \n", err)
 		return err
 	}
+
+	fmt.Println("Successfully connected to database")
+
 	err = dbs.Create()
 	if err != nil {
 		return err
 	}
+
+	fmt.Println("Successfully database created")
 
 	var db_result result
 	db_result.name = name
@@ -74,9 +83,15 @@ func Bench(dbs dbmss.Dbms, address string, name string) error {
 
 	db_result.setting, _ = BenchSetting(dbs)
 
+	fmt.Println("Set test done")
+
 	db_result.finding, _ = BenchFinding(dbs)
 
+	fmt.Println("Find test done")
+
 	db_result.deletion, _ = BenchDeleting(dbs)
+
+	fmt.Println("Delete test done")
 
 	fmt.Println(db_result)
 	return nil
@@ -84,17 +99,23 @@ func Bench(dbs dbmss.Dbms, address string, name string) error {
 
 func main() {
 	fmt.Println("GO STARTED...")
-	var master_pstgo dbmss.Dbms
-	master_pstgo = &dbmss.Pgs_connection{}
 
-	Bench(master_pstgo, "host=localhost port=5432 user=postgres dbname=pst-go password=paSs", "PostgreSQL")
+	db_name := os.Args[1]
 
-	var master_redis dbmss.Dbms
-	master_redis = &dbmss.Rds_connection{}
+	switch db_name {
+	case "postgres":
+		var master_pstgo dbmss.Dbms
+		master_pstgo = &dbmss.Pgs_connection{}
 
-	fmt.Println("sleeping")
-	time.Sleep(6 * time.Second)
-	Bench(master_redis, "redis-server-master:6379", "Redis")
+		Bench(master_pstgo, "host=postgres-server-master port=5432 user=postgres dbname=postgres password=pass sslmode=disable", "PostgreSQL")
+
+	case "redis":
+		var master_redis dbmss.Dbms
+		master_redis = &dbmss.Rds_connection{}
+
+		time.Sleep(6 * time.Second)
+		Bench(master_redis, "redis-server-master:6379", "Redis")
+	}
 
 	time.Sleep(2 * time.Minute)
 }

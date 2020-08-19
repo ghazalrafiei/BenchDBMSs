@@ -28,17 +28,16 @@
       sysctls:
         net.core.somaxconn: '511'
       command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
-
-
+    
 
     go:
       container_name: go
       build: .
-      working_dir: /go/src/github.com/ghazalrafiei/BenchDBMSs
       ports:
         - "8080:8080"
       depends_on:
         - redis-server-master
         - redis-server-slave-1
+      command: ["./main","redis"]
   
     

@@ -1,6 +1,6 @@
 FROM golang:1.13
 
-WORKDIR $GOPATH/src/github.com/ghazalrafiei/BenchDBMSs
+WORKDIR /opt/
 
 RUN go clean -modcache
 
@@ -13,6 +13,3 @@ RUN go mod download
 COPY . .
 
 RUN go build -o main .
-EXPOSE 8080
-
-CMD ["./main"]
