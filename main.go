@@ -49,13 +49,6 @@ func BenchFinding(db dbmss.Dbms) (time.Duration, error) {
 	ed := time.Now()
 	return ed.Sub(st), nil
 }
-func BenchGetting(db dbmss.Dbms) (time.Duration, error) {
-	st := time.Now()
-	//TODO: BODY
-
-	ed := time.Now()
-	return ed.Sub(st), nil
-}
 
 func Bench(dbs dbmss.Dbms, address string, name string) error {
 
@@ -72,6 +65,7 @@ func Bench(dbs dbmss.Dbms, address string, name string) error {
 
 	err = dbs.Create()
 	if err != nil {
+		fmt.Printf("error: %s \n", err)
 		return err
 	}
 
