@@ -3,20 +3,20 @@
   services:
     postgres-server-master:
       image: bitnami/postgresql:latest
-      container_name: pst-server-master
+      container_name: postgres-server-master
       ports: 
         - 5433:5433
       environment:
         - POSTGRESQL_REPLICATION_MODE=master
         - POSTGRESQL_USERNAME=postgres
-        - POSTGRESQL_PASSWORD=pass
-        - POSTGRESQL_DATABASE=postgres
-        - POSTGRESQL_REPLICATION_USER=postgres
-        - POSTGRESQL_REPLICATION_PASSWORD=pass
+        - POSTGRESQL_PASSWORD=MasterPass
+        - POSTGRESQL_DATABASE=gopost
+        - POSTGRESQL_REPLICATION_USER=postslave
+        - POSTGRESQL_REPLICATION_PASSWORD=SlavePass
     
     postgres-server-slave: 
       image: bitnami/postgresql:latest
-      container_name: pst-server-slave 
+      container_name: postgres-server-slave 
       depends_on: 
         - postgres-server-master
       ports: 
@@ -24,18 +24,16 @@
       environment:
         - POSTGRESQL_REPLICATION_MODE=slave
         - POSTGRESQL_USERNAME=postgres
-        - POSTGRESQL_DATABASE=postgres
+        - POSTGRESQL_PASSWORD=MasterPass
+        - POSTGRESQL_DATABASE=gopost
         - POSTGRESQL_MASTER_HOST=postgres-server-master
         - POSTGRESQL_MASTER_PORT_NUMBER=5432
-        - POSTGRESQL_REPLICATION_USER=postgres
-        - POSTGRESQL_REPLICATION_PASSWORD=pass
-        - ALLOW_EMPTY_PASSWORD=yes 
+        - POSTGRESQL_REPLICATION_USER=postslave
+        - POSTGRESQL_REPLICATION_PASSWORD=SlavePass
 
     go:
       container_name: go
       build: .
-      ports:
-        - "8080:8080"
       depends_on:
         - postgres-server-master
         - postgres-server-slave

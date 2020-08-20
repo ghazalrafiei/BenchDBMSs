@@ -8,7 +8,7 @@
       ports:
         - 6379:6379
       volumes:
-        - ./RedisConfigs/redis-master.conf:/usr/local/etc/redis/redis.conf
+        - ./dbmss/RedisConfigs/redis-master.conf:/usr/local/etc/redis/redis.conf
         - ../data/redis-master:/data
       sysctls:
         net.core.somaxconn: '511'
@@ -23,7 +23,7 @@
       ports:
         - 6380:6380
       volumes:
-        - ./RedisConfigs/redis-slave1.conf:/usr/local/etc/redis/redis.conf
+        - ./dbmss/RedisConfigs/redis-slave1.conf:/usr/local/etc/redis/redis.conf
         - ../data/redis-slave-1:/data
       sysctls:
         net.core.somaxconn: '511'
@@ -33,8 +33,6 @@
     go:
       container_name: go
       build: .
-      ports:
-        - "8080:8080"
       depends_on:
         - redis-server-master
         - redis-server-slave-1

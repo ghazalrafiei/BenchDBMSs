@@ -31,6 +31,7 @@ func BenchSetting(db dbmss.Dbms) (time.Duration, error) {
 
 func BenchDeleting(db dbmss.Dbms) (time.Duration, error) {
 	st := time.Now()
+
 	for i := 1; i <= bench_size; i++ {
 		index := uint(rand.Intn(bench_size))
 		db.Delete(index)
@@ -39,8 +40,10 @@ func BenchDeleting(db dbmss.Dbms) (time.Duration, error) {
 	ed := time.Now()
 	return ed.Sub(st), nil
 }
+
 func BenchFinding(db dbmss.Dbms) (time.Duration, error) {
 	st := time.Now()
+
 	for i := 1; i <= bench_size; i++ {
 		index := uint(rand.Intn(bench_size))
 		db.Find(index)
@@ -52,7 +55,7 @@ func BenchFinding(db dbmss.Dbms) (time.Duration, error) {
 
 func Bench(dbs dbmss.Dbms, address string, name string) error {
 
-	fmt.Printf("Trying to connect database %s %s\n", address, name)
+	fmt.Printf("Trying to connect database %s\n", name)
 
 	err := dbs.Connect(address)
 
@@ -64,6 +67,7 @@ func Bench(dbs dbmss.Dbms, address string, name string) error {
 	fmt.Println("Successfully connected to database")
 
 	err = dbs.Create()
+
 	if err != nil {
 		fmt.Printf("error: %s \n", err)
 		return err
@@ -88,30 +92,30 @@ func Bench(dbs dbmss.Dbms, address string, name string) error {
 	fmt.Println("Delete test done")
 
 	fmt.Println(db_result)
+
 	return nil
 }
 
 func main() {
-	fmt.Println("GO STARTED...")
+	fmt.Println("Benchmarking Started...")
 
 	db_name := os.Args[1]
 
+	time.Sleep(5 * time.Second)
 	switch db_name {
 	case "postgres":
 		var master_pstgo dbmss.Dbms
-		master_pstgo = &dbmss.Pgs_connection{}
+		master_pstgo = &dbmss.Pgs_connection_tool{}
 
-		Bench(master_pstgo, "host=postgres-server-master port=5432 user=postgres dbname=postgres password=pass sslmode=disable", "PostgreSQL")
+		Bench(master_pstgo, "host=postgres-server-master port=5432 user=postgres dbname=gopost password=MasterPass sslmode=disable", "PostgreSQL")
 
 	case "redis":
 		var master_redis dbmss.Dbms
-		master_redis = &dbmss.Rds_connection{}
+		master_redis = &dbmss.Rds_connection_tool{}
 
-		time.Sleep(6 * time.Second)
 		Bench(master_redis, "redis-server-master:6379", "Redis")
 	}
 
-	time.Sleep(2 * time.Minute)
 }
 
 type result struct {
@@ -124,5 +128,5 @@ type result struct {
 }
 
 func (r result) String() string {
-	return fmt.Sprintf("Results for Comparing Few DBMSs for %d Random Tests:\n\n-%s(with %d replicas):\n\tSetting: %v\n\tFinding: %v\n\tDeleting: %v", bench_size, r.name, r.replicas, r.setting, r.finding, r.deletion)
+	return fmt.Sprintf("\nResults for Comparing Few DBMSs for %d Random Tests:\n\n-%s(with %d replicas):\n\tSetting: %v\n\tFinding: %v\n\tDeleting: %v", bench_size, r.name, r.replicas, r.setting, r.finding, r.deletion)
 }
