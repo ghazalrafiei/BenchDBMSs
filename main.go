@@ -13,7 +13,9 @@ import (
 var bench_size int = 1000
 
 func BenchSetting(db dbmss.Dbms) (time.Duration, error) {
+
 	st := time.Now()
+
 	for i := 0; i < bench_size; i++ {
 		index := rand.Intn(5)
 		obj := object.Object{
@@ -25,11 +27,14 @@ func BenchSetting(db dbmss.Dbms) (time.Duration, error) {
 			return 0, err
 		}
 	}
+
 	ed := time.Now()
+
 	return ed.Sub(st), nil
 }
 
 func BenchDeleting(db dbmss.Dbms) (time.Duration, error) {
+
 	st := time.Now()
 
 	for i := 1; i <= bench_size; i++ {
@@ -38,10 +43,12 @@ func BenchDeleting(db dbmss.Dbms) (time.Duration, error) {
 	}
 
 	ed := time.Now()
+
 	return ed.Sub(st), nil
 }
 
 func BenchFinding(db dbmss.Dbms) (time.Duration, error) {
+
 	st := time.Now()
 
 	for i := 1; i <= bench_size; i++ {
@@ -50,12 +57,13 @@ func BenchFinding(db dbmss.Dbms) (time.Duration, error) {
 	}
 
 	ed := time.Now()
+
 	return ed.Sub(st), nil
 }
 
 func Bench(dbs dbmss.Dbms, address string, name string) error {
 
-	fmt.Printf("Trying to connect database %s\n", name)
+	fmt.Printf("Trying to connect to database %s\n", name)
 
 	err := dbs.Connect(address)
 
@@ -64,7 +72,7 @@ func Bench(dbs dbmss.Dbms, address string, name string) error {
 		return err
 	}
 
-	fmt.Println("Successfully connected to database")
+	fmt.Println("Connected to database successfully")
 
 	err = dbs.Create()
 
@@ -73,7 +81,7 @@ func Bench(dbs dbmss.Dbms, address string, name string) error {
 		return err
 	}
 
-	fmt.Println("Successfully database created")
+	fmt.Println("Database created successfully")
 
 	var db_result result
 	db_result.name = name
@@ -97,11 +105,13 @@ func Bench(dbs dbmss.Dbms, address string, name string) error {
 }
 
 func main() {
+
 	fmt.Println("Benchmarking Started...")
 
 	db_name := os.Args[1]
 
 	time.Sleep(5 * time.Second)
+
 	switch db_name {
 	case "postgres":
 		var master_pstgo dbmss.Dbms
